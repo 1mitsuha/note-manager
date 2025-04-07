@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { Note } from '../types/Note';
 
+// 根据环境变量设置 API 基础 URL，如果没有设置则使用本地开发服务器地址
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 const api = axios.create({
@@ -9,6 +10,15 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
+// 添加响应拦截器处理常见错误
+api.interceptors.response.use(
+  response => response,
+  error => {
+    console.error('API Error:', error);
+    return Promise.reject(error);
+  }
+);
 
 export const getNotes = async (): Promise<Note[]> => {
   const response = await api.get('/notes');
